@@ -19,22 +19,20 @@ app.use(express.json());
 app.use(express.static("./public"));
 
 app.get("/api/notes", (req, res) => {
-  console.log("Workss");
   let notes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
-
   return res.json(notes);
 });
 
-// app.post("/api/notes", (req, res) => {
-//   const newNote = req.body;
+app.post("/api/notes", (req, res) => {
+  const newNote = req.body;
 
-//   // add an id attribute to newNote with a random id
-//   // get all notes from db.json and parse it into javascript
+  // add an id attribute to newNote with a random id
+  // get all notes from db.json and parse it into javascript
 
-//   //append newnote to all notes
-//   //write the newly updated all notes to db.json
-//   return res.json(newNote);
-// });
+  //append newnote to all notes
+  //write the newly updated all notes to db.json
+  return res.json(newNote);
+});
 
 app.get("/notes", (req, res) =>
   res.sendFile(path.join(__dirname, "public/notes.html"))
