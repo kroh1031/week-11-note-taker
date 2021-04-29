@@ -10,7 +10,7 @@ let notes = require("./db/db.json");
 // This allows you to get the port from the bound environment variable (using process.env.PORT) if it exists, so that when your app starts on heroku's machine it will start listening on the appropriate port.
 const PORT = process.env.PORT || 3000;
 
-// Sets up the Express app to handle data parsing
+// Body Parser Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -37,15 +37,24 @@ app.get("/api/notes/:id", (req, res) => {
   }
 });
 
+// Create Note
 app.post("/api/notes", (req, res) => {
-  const newNote = req.body;
-
   // add an id attribute to newNote with a random id
-  // get all notes from db.json and parse it into javascript
+  const newNote = {
+    // method that generates a random id
+    id: uuid.v4(),
+    title: req.body.title,
+    text: req.body.text,
+  };
 
-  //append newnote to all notes
+  if (!newNote.title || !newNote.text) {
+    return res.status(400).json({ msg: `Please include a title and text` });
+  }
+  // append newNote to all notes
+  notes.push(newNote);
+
   //write the newly updated all notes to db.json
-  return res.json(newNote);
+  return res.json(notes);
 });
 
 app.get("/notes", (req, res) =>
