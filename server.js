@@ -5,6 +5,7 @@ const fs = require("fs");
 const path = require("path");
 
 const uuid = require("uuid");
+let notes = require("./db/db.json");
 
 // This allows you to get the port from the bound environment variable (using process.env.PORT) if it exists, so that when your app starts on heroku's machine it will start listening on the appropriate port.
 const PORT = process.env.PORT || 3000;
@@ -19,8 +20,21 @@ app.use(express.json());
 app.use(express.static("./public"));
 
 app.get("/api/notes", (req, res) => {
-  let notes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
-  return res.json(notes);
+  res.json(notes);
+});
+
+app.get("/api/notes/:id", (req, res) => {
+  //The some() array method runs the condition and if it exists, it will equal true, and if not, it will equal false.
+  const found = notes.some((note) => note.id === parseInt(req.params.id));
+
+  //Need to parseInt req.params.id because it needs to match the data type of note.id, which is a number
+  if (found) {
+    res.json(notes.filter((note) => note.id === parseInt(req.params.id)));
+  } else {
+    res
+      .status(400)
+      .json({ msg: `No note with the id of ${req.params.id} can be found` });
+  }
 });
 
 app.post("/api/notes", (req, res) => {
