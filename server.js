@@ -15,8 +15,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 //routes our static files aka our frontend code to our backend
-//if we didn't do this, none of our code within the public folder would've worked
-//meaning the css file, the js files
 app.use(express.static("./public"));
 
 app.get("/api/notes", (req, res) => {
@@ -55,6 +53,25 @@ app.post("/api/notes", (req, res) => {
 
   //write the newly updated all notes to db.json
   return res.json(notes);
+});
+
+// Delete Note
+app.delete("/api/notes/:id", (req, res) => {
+  //The some() array method runs the condition and if it exists, it will equal true, and if not, it will equal false.
+  console.log(req.params.id);
+  const found = notes.some((note) => note.id === parseInt(req.params.id));
+
+  //Need to parseInt req.params.id because it needs to match the data type of note.id, which is a number
+  if (found) {
+    res.json({
+      msg: `Note deleted`,
+      notes: notes.filter((note) => note.id !== parseInt(req.params.id)),
+    });
+  } else {
+    res
+      .status(400)
+      .json({ msg: `Note with the id of ${req.params.id} cannot be found` });
+  }
 });
 
 app.get("/notes", (req, res) =>
