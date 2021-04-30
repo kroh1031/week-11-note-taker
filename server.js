@@ -5,7 +5,7 @@ const fs = require("fs");
 const path = require("path");
 
 const uuid = require("uuid");
-let notes = require("./db/db.json");
+let notes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
 
 // This allows you to get the port from the bound environment variable (using process.env.PORT) if it exists, so that when your app starts on heroku's machine it will start listening on the appropriate port.
 const PORT = process.env.PORT || 3000;
@@ -59,14 +59,20 @@ app.post("/api/notes", (req, res) => {
 app.delete("/api/notes/:id", (req, res) => {
   //The some() array method runs the condition and if it exists, it will equal true, and if not, it will equal false.
   console.log(req.params.id);
-  const found = notes.some((note) => note.id === parseInt(req.params.id));
+  const found = notes.some((note) => note.id === req.params.id);
 
-  //Need to parseInt req.params.id because it needs to match the data type of note.id, which is a number
   if (found) {
-    res.json({
-      msg: `Note deleted`,
-      notes: notes.filter((note) => note.id !== parseInt(req.params.id)),
-    });
+    const excludeDeletedNote = notes.filter(
+      (note) => note.id !== req.params.id
+    );
+    console.log(excludeDeletedNote);
+    // fs.writeFileSync("./db/db.json", excludeDeletedNote, (err) =>
+    //   err ? console.log(err) : console.log("Successfully deleted note!")
+    // );
+    // res.json({
+    //   msg: `Note deleted`,
+    //   notes: notes.filter((note) => note.id !== req.params.id),
+    // });
   } else {
     res
       .status(400)
