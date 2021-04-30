@@ -65,14 +65,16 @@ app.delete("/api/notes/:id", (req, res) => {
     const excludeDeletedNote = notes.filter(
       (note) => note.id !== req.params.id
     );
-    console.log(excludeDeletedNote);
-    // fs.writeFileSync("./db/db.json", excludeDeletedNote, (err) =>
-    //   err ? console.log(err) : console.log("Successfully deleted note!")
-    // );
-    // res.json({
-    //   msg: `Note deleted`,
-    //   notes: notes.filter((note) => note.id !== req.params.id),
-    // });
+    fs.writeFileSync(
+      "./db/db.json",
+      JSON.stringify(excludeDeletedNote),
+      (err) =>
+        err ? console.log(err) : console.log("Successfully deleted note!")
+    );
+    res.json({
+      msg: `Note deleted`,
+      notes: excludeDeletedNote,
+    });
   } else {
     res
       .status(400)
