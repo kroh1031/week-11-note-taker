@@ -68,7 +68,7 @@ app.post("/api/notes", (req, res) => {
   return res.json(newNote);
 });
 
-// Delete Note
+// Delete Notes
 app.delete("/api/notes/:id", (req, res) => {
   let notes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
   //The some() array method runs the condition and if it exists, it will equal true, and if not, it will equal false.
