@@ -17,7 +17,7 @@ app.use(
 );
 app.use(express.json());
 
-//routes our static files aka our frontend code to our backend
+// Routes static files aka the frontend code to the backend
 app.use(express.static("./public"));
 
 app.get("/api/notes", (req, res) => {
@@ -25,28 +25,9 @@ app.get("/api/notes", (req, res) => {
   return res.json(notes);
 });
 
-// app.get("/api/notes/:id", (req, res) => {
-//   let notes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
-//   //The some() array method runs the condition and if it exists, it will equal true, and if not, it will equal false.
-//   const found = notes.some((note) => note.id === parseInt(req.params.id));
-
-//   //Need to parseInt req.params.id because it needs to match the data type of note.id, which is a number
-//   if (found) {
-//     res.json(notes.filter((note) => note.id === parseInt(req.params.id)));
-//   } else {
-//     res
-//       .status(400)
-//       .json({
-//         msg: `No note with the id of ${req.params.id} can be found`
-//       });
-//   }
-// });
-
 // Create Note
 app.post("/api/notes", (req, res) => {
   let notes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
-  console.log(notes);
-  // add an id attribute to newNote with a random id
   const newNote = {
     // method that generates a random id
     id: uuid.v4(),
@@ -61,18 +42,17 @@ app.post("/api/notes", (req, res) => {
   }
   // append newNote to all notes
   notes.push(newNote);
+  // write the newly updated notes to db.json
   fs.writeFileSync("./db/db.json", JSON.stringify(notes), (err) =>
     err ? console.log(err) : console.log("Successfully deleted note!")
   );
-  //write the newly updated all notes to db.json
   return res.json(newNote);
 });
 
-// Delete Notes
+// Delete Note
 app.delete("/api/notes/:id", (req, res) => {
   let notes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
   //The some() array method runs the condition and if it exists, it will equal true, and if not, it will equal false.
-  console.log(req.params.id);
   const found = notes.some((note) => note.id === req.params.id);
 
   if (found) {
@@ -100,7 +80,7 @@ app.get("/notes", (req, res) =>
   res.sendFile(path.join(__dirname, "public/notes.html"))
 );
 
-//this is a catch all for all routes
+// Catch all for all routes
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public/index.html"));
 });
